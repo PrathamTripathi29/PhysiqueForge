@@ -3,6 +3,7 @@ const mysql = require('mysql2');
 const cors = require('cors');
 const { GoogleGenAI } = require('@google/genai');
 const path = require('path');
+const fs = require('fs');
 
 
 const app = express();
@@ -12,14 +13,27 @@ const PORT = process.env.PORT || 5000;
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 app.use(express.json());
+const caPath = path.join(__dirname, 'ca.pem');
+if (!fs.existsSync(caPath)) {
+  console.error('❌ CA certificate not found at:', caPath);
+} else {
+  console.log('✅ CA certificate loaded');
+}
 
 // Create MySQL connection
 const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'ratonhokaton',
-  database: 'physiqueforge'
+  host: 'mysql-2cdbeb27-physiqueforge.k.aivencloud.com',
+  user: 'avnadmin',
+  password: 'AVNS_bsXkOMAO0fa4BnbGN06',
+  database: 'defaultdb',
+  port: 25557,
+  ssl: {
+    ca: fs.readFileSync(path.join(__dirname, 'ca.pem')),
+  },
+
 });
+
+console.log('Connecting to MySQL database...', );
 
 db.connect(err => {
   if (err) {
