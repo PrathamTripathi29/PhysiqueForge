@@ -90,7 +90,53 @@ app.get('/user-profile/:id', (req, res) => {
     
     // Prepare the Gemini API call prompt by inserting the user's data
     const ai = new GoogleGenAI({ apiKey: "AIzaSyA3xR-O5u43SWES-F0Divc4cF3aaedWNhk" });
-    const prompt = `You are a fitness planning assistant. Generate a personalized weekly workout schedule based on the user's age, gender, and fitness goals. User age: ${user.age}, gender: ${user.gender}, goals: ${JSON.stringify(user.goals)}. Your response must strictly follow this JSON structure: use this url for image in all exercises https://img.freepik.com/free-vector/couple-practicing-trail-run-training_74855-5474.jpg {\"userProfile\":{\"age\":number,\"gender\":\"string\",\"goals\":[\"string\"]},\"notes\":[\"string\"],\"totalWeeks\":number,\"workoutSchedule\":{\"days\":[{\"day\":\"string\",\"focus\":\"string\",\"exercises\":[{\"id\":\"string\",\"name\":\"string\",\"primaryTarget\":\"string\",\"secondaryTargets\":[\"string\"],\"sets\":number,\"reps\":\"string\",\"rest\":\"string\",\"gifUrl\":\"string\"}]}]}}. Tailor the workouts to the user’s profile and goals. Include relevant exercises with realistic values for sets, reps, and rest. Provide helpful notes on form, consistency, and safety. Ensure totalWeeks is between 4 and 12 based on goal intensity. Use actual or placeholder gifUrl values. Return only valid JSON following this structure.`;
+    const prompt = `You are a fitness planning assistant. Generate a personalized weekly fitness schedule and daily meal plans based on the user's age, gender, and fitness goals.
+
+User age: ${user.age}, gender: ${user.gender}, goals: ${JSON.stringify(user.goals)}.
+
+Your response must strictly follow this JSON structure: use this URL for all exercise gifs: https://img.freepik.com/free-vector/couple-practicing-trail-run-training_74855-5474.jpg and use this url for all meal gifs: https://assets.epicurious.com/photos/5b731134c31eaf1fc1402f11/16:9/w_2560%2Cc_limit/Arugula-with-Italian-Plums-and-Parmesan-recipe=08082018.jpg
+
+{\"userProfile\":{\"age\":number,\"gender\":\"string\",\"goals\":[\"string\"]},
+\"notes\":[\"string\"],
+\"totalWeeks\":number,
+\"workoutSchedule\":{\"days\":[
+  {
+    \"day\":\"string\",
+    \"focus\":\"string\",
+    \"exercises\":[
+      {
+        \"id\":\"string\",
+        \"name\":\"string\",
+        \"primaryTarget\":\"string\",
+        \"secondaryTargets\":[\"string\"],
+        \"sets\":number,
+        \"reps\":\"string\",
+        \"rest\":\"string\",
+        \"gifUrl\":\"string\"
+      }
+    ]
+  }
+]},
+\"weeklyMealPlan\":{
+  \"Monday\":{
+    \"breakfast\":{\"items\":[\"string\"],\"calories\":number,\"protein\":\"string\",\"carbs\":\"string\",\"fats\":\"string\"},
+    \"lunch\":{\"items\":[\"string\"],\"calories\":number,\"protein\":\"string\",\"carbs\":\"string\",\"fats\":\"string\"},
+    \"dinner\":{\"items\":[\"string\"],\"calories\":number,\"protein\":\"string\",\"carbs\":\"string\",\"fats\":\"string\"}
+  },
+  \"Tuesday\":{...},
+  \"Wednesday\":{...},
+  \"Thursday\":{...},
+  \"Friday\":{...},
+  \"Saturday\":{...},
+  \"Sunday\":{...}
+}}
+
+Guidelines:
+- Tailor the workouts and meals based on the user's goals (e.g. fat loss, muscle building, endurance)
+- Ensure sets, reps, and rest times are realistic
+- Each day should have distinct meals and focus areas
+- Use only the above JSON structure — no extra explanation or markdown`;
+
     console.log('Prompt for Gemini API:', prompt);
 
     try {
